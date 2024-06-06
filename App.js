@@ -6,7 +6,6 @@ import {
   TextInput,
   Modal,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -25,168 +24,57 @@ import {
   useDeleteNoteMutation,
 } from "./db";
 
-// function HomeScreen({ navigation }) {
-//   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-//   const {
-//     data: searchData,
-//     error,
-//     isLoading,
-//   } = useSearchNotesQuery(searchQuery); // Fetch notes based on search query
-//   const [deleteNote] = useDeleteNoteMutation();
-//   const [selectedNote, setSelectedNote] = useState(null);
-
-//   const handleDeleteNote = (item) => {
-//     setSelectedNote(item); // Set selected note for modal
-//   };
-
-//   const confirmDeleteNote = () => {
-//     deleteNote(selectedNote);
-//     setSelectedNote(null);
-//   };
-
-//   const renderItem = ({ item, index }) => (
-//     <View style={tw`w-full mb-2 px-1`}>
-//       <View
-//         style={tw`bg-yellow-200 rounded-sm p-3 border border-gray-800 `}
-//       >
-//         <TouchableOpacity
-//           onPress={() => navigation.navigate("View", { data: item })}
-//         >
-//           <Text style={tw`font-bold`}>{item.title}</Text>
-//           <Text>{item.content}</Text>
-//         </TouchableOpacity>
-//         <View style={tw`flex-row justify-end mt-2`}>
-//           <TouchableOpacity
-//             onPress={() => navigation.navigate("Edit", { data: item })}
-//             style={tw`bg-yellow-200 px-2 py-1 rounded mr-2 mt-4 border`}
-//           >
-//             <Text style={tw`text-black`}>Edit</Text>
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => handleDeleteNote(item)}
-//             style={tw`bg-yellow-200 px-2 py-1 rounded  mt-4 border`}
-//           >
-//             <Text style={tw`text-black`}>Delete</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </View>
-//     </View>
-//   );
-
-//   const renderFooter = () => (
-//     <View
-//       style={tw`flex-row justify-between items-center p-4 bg-yellow-200 h-full`}
-//     >
-//       <TextInput
-//         style={tw`h-12 border border-dashed border-gray-800 rounded-lg px-4 w-4/6`}
-//         onChangeText={setSearchQuery}
-//         value={searchQuery}
-//         placeholder="Search..."
-//       />
-//       <TouchableOpacity
-//         onPress={() => navigation.navigate("Add")}
-//         style={tw`bg-yellow-200 rounded-full w-12 h-12 items-center justify-center border`}
-//       >
-//         <Text style={tw`text-white text-center text-3xl text-gray-900`}>
-//           +
-//         </Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-
-//   return (
-//     <View style={tw`flex-1 items-center bg-yellow-200 relative`}>
-//       <View style={tw`w-full h-full`}>
-//         <View style={tw`h-[85%] w-[98%] mx-auto`}>
-//           {searchData && (
-//             <MasonryList
-//               style={tw`px-0.5 pt-0.5 pb-20`}
-//               data={searchData}
-//               numColumns={2}
-//               renderItem={renderItem}
-//               keyExtractor={(item) => item.id}
-//               showsVerticalScrollIndicator={false}
-//               contentContainerStyle={tw`px-2`}
-//             />
-//           )}
-//         </View>
-//         <View style={tw`h-[15%] w-full`}>{renderFooter()}</View>
-//       </View>
-//       <Modal
-//         transparent={true}
-//         visible={selectedNote !== null}
-//         animationType="slide"
-//         onRequestClose={() => setSelectedNote(null)}
-//       >
-//         <View
-//           style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
-//         >
-//           <View style={tw`w-4/5 bg-white p-6 rounded-lg`}>
-//             <Text style={tw`text-lg mb-4`}>
-//               Are you sure you want to delete this note?
-//             </Text>
-//             <View style={tw`flex-row justify-end`}>
-//               <TouchableOpacity
-//                 onPress={() => setSelectedNote(null)}
-//                 style={tw`mr-4`}
-//               >
-//                 <Text style={tw`text-gray-800`}>Cancel</Text>
-//               </TouchableOpacity>
-//               <TouchableOpacity
-//                 onPress={confirmDeleteNote}
-//               >
-//                 <Text style={tw`text-gray-800`}>Delete</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//         </View>
-//       </Modal>
-//     </View>
-//   );
-// }
-
 function HomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const {
-    data: searchData,
-    error,
-    isLoading,
-  } = useSearchNotesQuery(searchQuery); // Fetch notes based on search query
+  const { data: searchData, error, isLoading } = useSearchNotesQuery(searchQuery); // Fetch notes based on search query
   const [deleteNote] = useDeleteNoteMutation();
   const [selectedNote, setSelectedNote] = useState(null);
 
+  // Handle delete button press - sets the selected note for modal
   const handleDeleteNote = (item) => {
     setSelectedNote(item); // Set selected note for modal
   };
 
+  // Confirm deletion of the selected note
   const confirmDeleteNote = () => {
     deleteNote(selectedNote);
     setSelectedNote(null);
   };
 
-  const renderItem = ({ item, index }) => (
+  // Fixed background color and other styles
+  const backgroundColor = 'bg-blue-900';
+  const textColor = 'text-white';
+  const borderColor = 'border-white';
+  const headerBackgroundColor = '#1E3A8A'; // Use a valid hex color for the header background
+  const headerTextColor = '#FFFFFF';
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerStyle: { backgroundColor: headerBackgroundColor, borderBottomWidth: 0 },
+      headerTintColor: headerTextColor,
+      headerTitleStyle: { fontWeight: 'bold' },
+    });
+  }, [navigation]);
+
+  const renderItem = ({ item }) => (
     <View style={tw`w-full mb-2 px-1`}>
-      <View
-        style={tw`bg-yellow-200 rounded-lg p-3 border border-dashed border-gray-800`}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("View", { data: item })}
-        >
-          <Text style={tw`font-bold`}>{item.title}</Text>
-          <Text>{item.content}</Text>
+      <View style={tw`${backgroundColor} rounded-lg p-3 border border-dashed ${borderColor}`}>
+        <TouchableOpacity onPress={() => navigation.navigate("View", { data: item })}>
+          <Text style={tw`font-bold ${textColor}`}>{item.title}</Text>
+          <Text style={tw`${textColor}`}>{item.content}</Text>
         </TouchableOpacity>
         <View style={tw`flex-row justify-end mt-2`}>
           <TouchableOpacity
             onPress={() => navigation.navigate("Edit", { data: item })}
-            style={tw`bg-yellow-200 px-2 py-1 rounded mr-2 mt-4 border border-dashed`}
+            style={tw`${backgroundColor} px-2 py-1 rounded mr-2 mt-4 border border-dashed ${borderColor}`}
           >
-            <Text style={tw`text-black`}>Edit</Text>
+            <Text style={tw`${textColor}`}>Edit</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleDeleteNote(item)}
-            style={tw`bg-yellow-200 px-2 py-1 rounded mt-4 border border-dashed`}
+            style={tw`${backgroundColor} px-2 py-1 rounded mt-4 border border-dashed ${borderColor}`}
           >
-            <Text style={tw`text-black`}>Delete</Text>
+            <Text style={tw`${textColor}`}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -194,30 +82,28 @@ function HomeScreen({ navigation }) {
   );
 
   const renderFooter = () => (
-    <View
-      style={tw`flex-row justify-between items-center p-4 bg-yellow-200 h-full`}
-    >
+    <View style={tw`flex-row justify-between items-center p-6 ${backgroundColor} h-full`}>
       <TextInput
-        style={tw`h-12 border border-dashed border-gray-800 rounded-lg px-4 w-4/6`}
+        style={tw`h-12 border border-dashed ${borderColor} rounded-lg px-4 w-5/6 ${textColor}`}
         onChangeText={setSearchQuery}
         value={searchQuery}
         placeholder="Search..."
+        placeholderTextColor='white' // Fixed placeholder color
       />
       <TouchableOpacity
         onPress={() => navigation.navigate("Add")}
-        style={tw`bg-yellow-200 rounded-full w-12 h-12 items-center justify-center border`}
+        style={tw`${backgroundColor} rounded-full w-12 h-12 items-center justify-center border ${borderColor}`}
       >
-        <Text style={tw`text-white text-center text-3xl text-gray-900`}>
-          +
-        </Text>
+        <Text style={tw`text-3xl ${textColor}`}>+</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={tw`flex-1 items-center bg-yellow-200 relative`}>
+    <View style={tw`flex-1 items-center ${backgroundColor} relative`}>
       <View style={tw`w-full h-full`}>
         <View style={tw`h-[85%] w-[98%] mx-auto`}>
+          {/* Display the list of notes if searchData is available */}
           {searchData && (
             <MasonryList
               style={tw`px-0.5 pt-0.5 pb-20`}
@@ -230,7 +116,10 @@ function HomeScreen({ navigation }) {
             />
           )}
         </View>
-        <View style={tw`h-[15%] w-full`}>{renderFooter()}</View>
+        <View style={tw`h-[15%] w-full`}>
+          {/* Render the footer */}
+          {renderFooter()}
+        </View>
       </View>
       <Modal
         transparent={true}
@@ -238,9 +127,7 @@ function HomeScreen({ navigation }) {
         animationType="slide"
         onRequestClose={() => setSelectedNote(null)}
       >
-        <View
-          style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
-        >
+        <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
           <View style={tw`w-4/5 bg-white p-6 rounded-lg`}>
             <Text style={tw`text-lg mb-4`}>
               Are you sure you want to delete this note?
@@ -252,9 +139,7 @@ function HomeScreen({ navigation }) {
               >
                 <Text style={tw`text-gray-800`}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={confirmDeleteNote}
-              >
+              <TouchableOpacity onPress={confirmDeleteNote}>
                 <Text style={tw`text-gray-800`}>Delete</Text>
               </TouchableOpacity>
             </View>
@@ -265,60 +150,10 @@ function HomeScreen({ navigation }) {
   );
 }
 
-
-// function AddScreen({ navigation }) {
-//   const [title, setTitle] = useState("");
-//   const [content, setContent] = useState("");
-//   const [addNote, { data: addNoteData }] = useAddNoteMutation();
-
-//   useEffect(() => {
-//     if (addNoteData != undefined) {
-//       console.log(addNoteData.id);
-//       navigation.navigate("Home");
-//     }
-//   }, [addNoteData]);
-
-//   // Set header options
-//   navigation.setOptions({
-//     headerStyle: tw`bg-yellow-200 border-0`, // Change header color to yellow-200
-//     headerTintColor: tw`text-black`, // Change header text color to black
-//     headerTitleStyle: tw`font-bold`,
-//     headerShadowVisible: false,
-//   });
-
-//   return (
-//     <View style={tw`flex-1 p-4 bg-yellow-200`}>
-//       <TextInput
-//         value={title}
-//         onChangeText={setTitle}
-//         placeholder="Title"
-//         style={tw`h-12 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
-//       />
-//       <TextInput
-//         value={content}
-//         onChangeText={setContent}
-//         placeholder="Content"
-//         style={tw`h-48 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
-//         multiline
-//       />
-//       <TouchableOpacity
-//         onPress={() => {
-//           addNote({
-//             title,
-//             content,
-//           });
-//         }}
-//         style={tw`bg-yellow-200 p-4 rounded-lg border`}
-//       >
-//         <Text style={tw`text-white text-black`}>Save Note</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
 function AddScreen() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [addNote, { data: addNoteData }] = useAddNoteMutation();
   const navigation = useNavigation();
 
@@ -330,41 +165,89 @@ function AddScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerStyle: tw`bg-yellow-200 border-0`,
-      headerTintColor: tw`text-black`,
-      headerTitleStyle: tw`font-bold`,
-      headerShadowVisible: false,
+      headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
+      headerTintColor: '#FFFFFF',
+      headerTitleStyle: { fontWeight: 'bold' },
     });
   }, [navigation]);
 
-  const handleSaveNote = () => {
+  const saveNote = () => {
     addNote({
       title,
       content,
     });
   };
 
+  const handleSaveNote = () => {
+    if (!title.trim() || !content.trim()) {
+      setIsConfirmModalVisible(true);
+    } else {
+      saveNote();
+    }
+  };
+
   return (
-    <View style={tw`flex-1 p-4 bg-yellow-200`}>
+    <View style={tw`flex-1 p-4 bg-blue-900`}>
       <TextInput
         value={title}
         onChangeText={setTitle}
         placeholder="Title"
-        style={tw`h-12 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
+        style={tw`h-12 p-2 bg-blue-900 rounded-lg mb-4 border border-dashed border-white text-white`}
+        placeholderTextColor='white'
       />
       <TextInput
         value={content}
         onChangeText={setContent}
         placeholder="Content"
-        style={tw`h-48 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
+        style={tw`h-48 p-2 bg-blue-900 rounded-lg mb-4 border border-dashed border-white text-white`}
         multiline
+        placeholderTextColor='white'
       />
-      <TouchableOpacity
-        onPress={handleSaveNote}
-        style={tw`bg-yellow-200 p-4 rounded-lg border`}
+      <View style={tw`flex-row justify-end`}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={tw`bg-blue-900 p-4 rounded-lg border border-white mr-4 w-24`}
+        >
+          <Text style={tw`text-white text-center`}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleSaveNote}
+          style={tw`bg-blue-900 p-4 rounded-lg border border-white w-24`}
+        >
+          <Text style={tw`text-white text-center`}>Save Note</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        transparent={true}
+        visible={isConfirmModalVisible}
+        animationType="slide"
+        onRequestClose={() => setIsConfirmModalVisible(false)}
       >
-        <Text style={tw`text-black`}>Save Note</Text>
-      </TouchableOpacity>
+        <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
+          <View style={tw`w-4/5 bg-white p-6 rounded-lg`}>
+            <Text style={tw`text-lg mb-4`}>
+             Are you sure you want to save a blank note?
+            </Text>
+            <View style={tw`flex-row justify-end`}>
+              <TouchableOpacity
+                onPress={() => setIsConfirmModalVisible(false)}
+                style={tw`mr-4`}
+              >
+                <Text style={tw`text-gray-800`}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  saveNote();
+                  setIsConfirmModalVisible(false);
+                }}
+              >
+                <Text style={tw`text-gray-800`}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -373,55 +256,62 @@ function AddScreen() {
 function EditScreen({ route, navigation }) {
   const { data } = route.params;
   const [title, setTitle] = useState(data.title);
-  const [content, setContent] = useState(data.content.trim()); // Trim content on load
+  const [content, setContent] = useState(data.content);
   const [updateNote, { data: updateNoteData }] = useUpdateNoteMutation();
-  const inputRef = useRef(null);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: data.title,
-      headerStyle: tw`bg-yellow-200 border-0`,
-      headerTintColor: tw`text-black`,
-      headerTitleStyle: tw`font-bold`,
-      headerShadowVisible: false,
-    });
-    inputRef.current.focus();
-  }, []);
 
   useEffect(() => {
     if (updateNoteData) {
       navigation.navigate("Home");
     }
-  }, [updateNoteData]);
+  }, [updateNoteData, navigation]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
+      headerTintColor: '#FFFFFF',
+      headerTitleStyle: { fontWeight: 'bold' },
+    });
+  }, [navigation]);
+
+  const handleSaveNote = () => {
+    updateNote({
+      id: data.id,
+      title,
+      content,
+    });
+  };
 
   return (
-    <View style={tw`flex-1 p-4 bg-yellow-200`}>
+    <View style={tw`flex-1 p-4 bg-blue-900`}>
       <TextInput
-        ref={inputRef}
         value={title}
         onChangeText={setTitle}
         placeholder="Title"
-        style={tw`h-12 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
+        style={tw`h-12 p-2 bg-blue-900 rounded-lg mb-4 border border-dashed border-white text-white`}
+        placeholderTextColor='white'
       />
       <TextInput
         value={content}
         onChangeText={setContent}
         placeholder="Content"
-        style={tw`h-48 p-2 bg-yellow-200 rounded-lg mb-4 border border-dashed`}
+        style={tw`h-48 p-2 bg-blue-900 rounded-lg mb-4 border border-dashed border-white text-white`}
         multiline
+        placeholderTextColor='white'
       />
-      <TouchableOpacity
-        onPress={() => {
-          updateNote({
-            ...data,
-            title,
-            content,
-          });
-        }}
-        style={tw`bg-yellow-200 p-4 rounded-lg border`}
-      >
-        <Text style={tw`text-white text-black`}>Save Changes</Text>
-      </TouchableOpacity>
+      <View style={tw`flex-row justify-end`}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={tw`bg-blue-900 p-4 rounded-lg border border-white mr-4 w-24`}
+        >
+          <Text style={tw`text-white text-center`}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleSaveNote}
+          style={tw`bg-blue-900 p-4 rounded-lg border border-white w-24`}
+        >
+          <Text style={tw`text-white text-center`}>Save Note</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -429,121 +319,55 @@ function EditScreen({ route, navigation }) {
 
 function ViewScreen({ route, navigation }) {
   const { data } = route.params;
-  const [deleteNote] = useDeleteNoteMutation();
-  const [selectedNote, setSelectedNote] = useState(null);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
+      headerTintColor: '#FFFFFF',
+      headerTitleStyle: { fontWeight: 'bold' },
+    });
+  }, [navigation]);
 
   return (
-    <ScrollView
-      style={tw`bg-yellow-200`}
-      contentContainerStyle={tw`flex-1 p-4`}
-    >
-      <Text style={tw`text-xl font-bold mb-2 bg-yellow-200 p-2`}>
-        {data.title}
-      </Text>
-      <Text style={tw`text-lg mb-4 bg-yellow-200 p-2`}>{data.content}</Text>
-      <View style={tw`flex-row justify-end`}>
+    <View style={tw`flex-1 p-4 bg-blue-900`}>
+      <ScrollView>
+        <Text style={tw`font-bold text-xl mb-4 text-white`}>{data.title}</Text>
+        <Text style={tw`text-white`}>{data.content}</Text>
+      </ScrollView>
+      <View style={tw`flex-row justify-end mt-4`}>
         <TouchableOpacity
           onPress={() => navigation.navigate("Edit", { data })}
-          style={tw`bg-yellow-200 px-4 py-2 mb-4 rounded mr-2 border`}
+          style={tw`bg-blue-900 p-4 rounded-lg border border-white w-24`}
         >
-          <Text style={tw`text-black`}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setSelectedNote(data)}
-          style={tw`bg-yellow-200 px-4 py-2 mb-4 rounded border `}
-        >
-          <Text style={tw`text-black`}>Delete</Text>
+          <Text style={tw`text-white text-center`}>Edit</Text>
         </TouchableOpacity>
       </View>
-
-      <Modal
-        transparent={true}
-        visible={selectedNote !== null}
-        animationType="slide"
-        onRequestClose={() => setSelectedNote(null)}
-      >
-        <View
-          style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
-        >
-          <View style={tw`w-4/5 bg-white p-6 rounded-lg`}>
-            <Text style={tw`text-lg mb-4`}>
-              Are you sure you want to delete this note?
-            </Text>
-            <View style={tw`flex-row justify-end`}>
-              <TouchableOpacity
-                onPress={() => setSelectedNote(null)}
-                style={tw`mr-4`}
-              >
-                <Text style={tw`text-gray-800`}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  deleteNote(selectedNote);
-                  setSelectedNote(null);
-                  navigation.goBack();
-                }}
-              >
-                <Text style={tw`text-gray-800`}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </ScrollView>
+    </View>
   );
 }
 
+
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   useDeviceContext(tw);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator>
           <Stack.Screen
-            options={{
-              headerStyle: tw`bg-yellow-200 border-0`, // Background color set to yellow
-              headerTintColor: tw`bg-gray-800`, // Dark purple color for header text
-              headerTitleStyle: tw`font-bold px-3`, // Make header text bold
-              headerShadowVisible: false, // Hide header shadow
-            }}
             name="Home"
             component={HomeScreen}
+            options={{ title: "Notes" }}
           />
-          <Stack.Screen
-            options={{
-              // headerStyle: tw`bg-purple-300 border-0`,
-              // headerTintColor: "#fff",
-              headerTitleStyle: tw`font-bold`,
-              headerShadowVisible: false,
-            }}
-            name="Add"
-            component={AddScreen}
-          />
-          <Stack.Screen
-            options={{
-              headerStyle: tw`bg-yellow-200 border-0`,
-              // headerTintColor: "#000",
-              headerTitleStyle: tw`font-bold`,
-              headerShadowVisible: false,
-            }}
-            name="Edit"
-            component={EditScreen}
-          />
-          <Stack.Screen
-            options={{
-              headerStyle: tw`bg-yellow-200 border-0`,
-              // headerTintColor: "#000",
-              headerTitleStyle: tw`font-bold`,
-              headerShadowVisible: false,
-            }}
-            name="View"
-            component={ViewScreen}
-          />
+          <Stack.Screen name="Add" component={AddScreen} options={{ title: "Add Note" }} />
+          <Stack.Screen name="Edit" component={EditScreen} options={{ title: "Edit Note" }} />
+          <Stack.Screen name="View" component={ViewScreen} options={{ title: "View Note" }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
   );
 }
+
+export default App;
