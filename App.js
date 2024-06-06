@@ -15,7 +15,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import MasonryList from "@react-native-seoul/masonry-list";
 
-// database links
+// Import functions to interact with the database
 import {
   useFetchNotesQuery,
   useSearchNotesQuery,
@@ -24,30 +24,32 @@ import {
   useDeleteNoteMutation,
 } from "./db";
 
+// HomeScreen component displays the list of notes and a search bar
 function HomeScreen({ navigation }) {
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState(""); // State to store search query
   const { data: searchData, error, isLoading } = useSearchNotesQuery(searchQuery); // Fetch notes based on search query
-  const [deleteNote] = useDeleteNoteMutation();
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [deleteNote] = useDeleteNoteMutation(); // Function to delete a note
+  const [selectedNote, setSelectedNote] = useState(null); // State to track the note to be deleted
 
-  // Handle delete button press - sets the selected note for modal
+  // Function to handle delete button press
   const handleDeleteNote = (item) => {
-    setSelectedNote(item); // Set selected note for modal
+    setSelectedNote(item); // Set the selected note to be deleted
   };
 
-  // Confirm deletion of the selected note
+  // Function to confirm deletion of the selected note
   const confirmDeleteNote = () => {
-    deleteNote(selectedNote);
-    setSelectedNote(null);
+    deleteNote(selectedNote); // Call delete note function
+    setSelectedNote(null); // Reset the selected note
   };
 
-  // Fixed background color and other styles
+  // Define styles for the UI components
   const backgroundColor = 'bg-blue-900';
   const textColor = 'text-white';
   const borderColor = 'border-white';
   const headerBackgroundColor = '#1E3A8A'; // Use a valid hex color for the header background
   const headerTextColor = '#FFFFFF';
 
+  // Use layout effect to set navigation options for the header
   useLayoutEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: headerBackgroundColor, borderBottomWidth: 0 },
@@ -56,6 +58,7 @@ function HomeScreen({ navigation }) {
     });
   }, [navigation]);
 
+  // Function to render each note item
   const renderItem = ({ item }) => (
     <View style={tw`w-full mb-2 px-1`}>
       <View style={tw`${backgroundColor} rounded-lg p-3 border border-dashed ${borderColor}`}>
@@ -81,6 +84,7 @@ function HomeScreen({ navigation }) {
     </View>
   );
 
+  // Function to render the footer with search bar and add button
   const renderFooter = () => (
     <View style={tw`flex-row justify-between items-center p-6 ${backgroundColor} h-full`}>
       <TextInput
@@ -150,19 +154,22 @@ function HomeScreen({ navigation }) {
   );
 }
 
+// AddScreen component allows users to add a new note
 function AddScreen() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-  const [addNote, { data: addNoteData }] = useAddNoteMutation();
-  const navigation = useNavigation();
+  const [title, setTitle] = useState(""); // State to store the note title
+  const [content, setContent] = useState(""); // State to store the note content
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false); // State to track if the confirm modal is visible
+  const [addNote, { data: addNoteData }] = useAddNoteMutation(); // Function to add a new note
+  const navigation = useNavigation(); // Get navigation object
 
+  // Effect to navigate back to Home screen when a note is added successfully
   useEffect(() => {
     if (addNoteData) {
       navigation.navigate("Home");
     }
   }, [addNoteData, navigation]);
 
+  // Set navigation options for the header
   useEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
@@ -171,6 +178,7 @@ function AddScreen() {
     });
   }, [navigation]);
 
+  // Function to save the note
   const saveNote = () => {
     addNote({
       title,
@@ -178,9 +186,10 @@ function AddScreen() {
     });
   };
 
+  // Handle save button press
   const handleSaveNote = () => {
     if (!title.trim() || !content.trim()) {
-      setIsConfirmModalVisible(true);
+      setIsConfirmModalVisible(true); // Show confirm modal if title or content is blank
     } else {
       saveNote();
     }
@@ -252,19 +261,21 @@ function AddScreen() {
   );
 }
 
-
+// EditScreen component allows users to edit an existing note
 function EditScreen({ route, navigation }) {
-  const { data } = route.params;
-  const [title, setTitle] = useState(data.title);
-  const [content, setContent] = useState(data.content);
-  const [updateNote, { data: updateNoteData }] = useUpdateNoteMutation();
+  const { data } = route.params; // Extract note data passed via route parameters
+  const [title, setTitle] = useState(data.title); // State to store the note title
+  const [content, setContent] = useState(data.content); // State to store the note content
+  const [updateNote, { data: updateNoteData }] = useUpdateNoteMutation(); // Function to update a note
 
+  // Effect to navigate back to Home screen when a note is updated successfully
   useEffect(() => {
     if (updateNoteData) {
       navigation.navigate("Home");
     }
   }, [updateNoteData, navigation]);
 
+  // Set navigation options for the header
   useEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
@@ -273,6 +284,7 @@ function EditScreen({ route, navigation }) {
     });
   }, [navigation]);
 
+  // Function to handle save button press
   const handleSaveNote = () => {
     updateNote({
       id: data.id,
@@ -316,24 +328,27 @@ function EditScreen({ route, navigation }) {
   );
 }
 
-
+// ViewScreen component displays the details of a single note
 function ViewScreen({ route, navigation }) {
-  const { data } = route.params;
+  const { data } = route.params; // Extract note data passed via route parameters
 
+  // Set up navigation options for the screen when it mounts
   useEffect(() => {
     navigation.setOptions({
-      headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 },
-      headerTintColor: '#FFFFFF',
-      headerTitleStyle: { fontWeight: 'bold' },
+      headerStyle: { backgroundColor: '#1E3A8A', borderBottomWidth: 0 }, // Set the header background color and remove bottom border
+      headerTintColor: '#FFFFFF', // Set the header text color
+      headerTitleStyle: { fontWeight: 'bold' }, // Set the header title style to bold
     });
   }, [navigation]);
 
   return (
     <View style={tw`flex-1 p-4 bg-blue-900`}>
+      {/* Scrollable view to display the note content */}
       <ScrollView>
         <Text style={tw`font-bold text-xl mb-4 text-white`}>{data.title}</Text>
         <Text style={tw`text-white`}>{data.content}</Text>
       </ScrollView>
+      {/* Container for the edit button */}
       <View style={tw`flex-row justify-end mt-4`}>
         <TouchableOpacity
           onPress={() => navigation.navigate("Edit", { data })}
@@ -346,15 +361,16 @@ function ViewScreen({ route, navigation }) {
   );
 }
 
-
+// Stack navigator to manage screen navigation
 const Stack = createNativeStackNavigator();
 
+// App component to wrap the navigation and state management providers
 function App() {
-  useDeviceContext(tw);
+  useDeviceContext(tw); // Enable Tailwind CSS for React Native
 
   return (
-    <Provider store={store}>
-      <NavigationContainer>
+    <Provider store={store}> {/* Wrap the app with Redux store provider */}
+      <NavigationContainer> {/* Navigation container to manage navigation state */}
         <Stack.Navigator>
           <Stack.Screen
             name="Home"
